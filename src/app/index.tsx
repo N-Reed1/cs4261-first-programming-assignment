@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 
 interface Idea {
@@ -6,20 +6,59 @@ interface Idea {
   text: string;
 }
 
+// TODO: Paste your copied Firebase URL here. 
+// Make sure it does NOT have a slash at the very end (e.g., 'https://idea-vault-xxxx-default-rtdb.firebaseio.com')
+const FIREBASE_URL = 'https://cs4261-firstprogramming-default-rtdb.firebaseio.com/';
+
 export default function App() {
   const [idea, setIdea] = useState<string>('');
   const [ideaList, setIdeaList] = useState<Idea[]>([]);
 
-  const handleSubmit = () => {
+  // 1. Fetch existing data when the app loads
+  useEffect(() => {
+    fetch(`${FIREBASE_URL}/ideas.json`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data) {
+          const fetchedIdeas = Object.keys(data).map((key) => ({
+            id: key,
+            text: data[key].text,
+          }));
+          // Reverse so newest ideas appear at the top
+          setIdeaList(fetchedIdeas.reverse());
+        }
+      })
+      .catch((err) => console.error("Error fetching data: ", err));
+  }, []);
+
+  // 2. Save new data to the cloud
+  const handleSubmit = async () => {
     if (idea.trim().length > 0) {
-      setIdeaList([{ id: Date.now().toString(), text: idea }, ...ideaList]);
+      const newId = Date.now().toString();
+      const ideaText = idea;
+      
+      // Update local screen immediately for a snappy UI
+      setIdeaList([{ id: newId, text: ideaText }, ...ideaList]);
       setIdea('');
+
+      // Send to Firebase
+      await fetch(`${FIREBASE_URL}/ideas/${newId}.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: ideaText }),
+      });
     }
   };
 
-  // New function to filter out the deleted idea
-  const handleDelete = (id: string) => {
-    setIdeaList(ideaList.filter(item => item.id !== id));
+  // 3. Delete data from the cloud
+  const handleDelete = async (id: string) => {
+    // Update local screen immediately
+    setIdeaList(ideaList.filter((item) => item.id !== id));
+
+    // Remove from Firebase
+    await fetch(`${FIREBASE_URL}/ideas/${id}.json`, {
+      method: 'DELETE',
+    });
   };
 
   return (
