@@ -1,98 +1,135 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from 'react';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
+interface Idea {
+  id: string;
+  text: string;
 }
 
-export default function HomeScreen() {
+export default function App() {
+  const [idea, setIdea] = useState<string>('');
+  const [ideaList, setIdeaList] = useState<Idea[]>([]);
+
+  const handleSubmit = () => {
+    if (idea.trim().length > 0) {
+      setIdeaList([{ id: Date.now().toString(), text: idea }, ...ideaList]);
+      setIdea('');
+    }
+  };
+
+  // New function to filter out the deleted idea
+  const handleDelete = (id: string) => {
+    setIdeaList(ideaList.filter(item => item.id !== id));
+  };
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <Text style={styles.title}>Idea Vault</Text>
+      <Text style={styles.subtitle}>Log your notes and ideas.</Text>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter a new idea..."
+          placeholderTextColor="#666"
+          value={idea}
+          onChangeText={setIdea}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Submit</Text>
+        </TouchableOpacity>
+      </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      <FlatList
+        data={ideaList}
+        keyExtractor={(item) => item.id}
+        style={styles.list}
+        renderItem={({ item }) => (
+          <View style={styles.listItem}>
+            <Text style={styles.listText}>{item.text}</Text>
+            {/* New delete button */}
+            <TouchableOpacity onPress={() => handleDelete(item.id)}>
+              <Text style={styles.deleteText}>X</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      />
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    backgroundColor: '#121212',
+    paddingTop: 60,
+    paddingHorizontal: 20,
   },
   title: {
-    textAlign: 'center',
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 5,
   },
-  code: {
-    textTransform: 'uppercase',
+  subtitle: {
+    fontSize: 16,
+    color: '#a0a0a0',
+    marginBottom: 20,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  inputContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  input: {
+    flex: 1,
+    backgroundColor: '#1e1e1e',
+    color: '#ffffff',
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    fontSize: 16,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  button: {
+    backgroundColor: '#6200ee',
+    borderRadius: 8,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  list: {
+    flex: 1,
+  },
+  listItem: {
+    backgroundColor: '#1e1e1e',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#333',
+    flexDirection: 'row', // Aligns text and button horizontally
+    justifyContent: 'space-between', // Pushes the X to the far right
+    alignItems: 'center',
+  },
+  listText: {
+    color: '#e0e0e0',
+    fontSize: 16,
+    flex: 1,
+    paddingRight: 10,
+  },
+  deleteText: {
+    color: '#ff5252', // A clean red for the delete action
+    fontWeight: 'bold',
+    fontSize: 18,
+    paddingHorizontal: 5,
   },
 });
