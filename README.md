@@ -1,7 +1,7 @@
 # Idea Vault - First Programming Assignment
 
-**Developer:** Nicholas Reed
-**Course:** CS 4261 
+* **Developer:** [Your Name]
+* **Course:** CS 4261
 
 ## Overview
 Idea Vault is a lightweight mobile application inspired by the quick-capture functionality of workspace tools like Notion, designed to seamlessly log and organize personal notes. 
@@ -16,7 +16,7 @@ I chose this project to gain hands-on experience with modern mobile development 
 
 ### Setup Steps
 1. Clone this repository:
-   `git clone [Insert Your Repo URL Here]`
+   `git clone [Insert the Repo URL Here]`
 2. Navigate into the project directory:
    `cd cs4261-first-programming-assignment`
 3. Install dependencies:
@@ -27,7 +27,7 @@ I chose this project to gain hands-on experience with modern mobile development 
 
 ## Backend Service
 * **Database:** Firebase Realtime Database
-* **API URL:** `[Insert Your Firebase URL Here]`
+* **API URL:** `https://cs4261-firstprogramming-default-rtdb.firebaseio.com/`
 
 ## References & Resources
 * **Expo Documentation:** Used to understand the `npx create-expo-app` boilerplate and configure the local development server. 
