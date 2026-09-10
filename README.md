@@ -1,6 +1,6 @@
 # Idea Vault - First Programming Assignment
 
-* **Developer:** [Your Name]
+* **Developer:** Nicholas Reed
 * **Course:** CS 4261
 
 ## Overview
