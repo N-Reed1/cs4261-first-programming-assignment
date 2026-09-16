@@ -1,12 +1,20 @@
-# Idea Vault - First Programming Assignment
+# Idea Vault 
 
-* **Developer:** Nicholas Reed
-* **Course:** CS 4261
+Idea Vault is a lightweight, cross-platform mobile application designed to seamlessly log and organize personal notes. Built with React Native and Expo, it features a snappy, UI and two-way data synchronization.
 
-## Overview
-Idea Vault is a lightweight mobile application inspired by the quick-capture functionality of workspace tools like Notion, designed to seamlessly log and organize personal notes. 
+## Tech Stack
+* **Frontend:** React Native, Expo, TypeScript
+* **Backend:** Firebase Realtime Database
+* **Testing:** Expo Go (iOS), Android Emulator
 
-I chose this project to gain hands-on experience with modern mobile development using React Native and Expo, moving away from heavy IDE setups to a faster, cross-platform workflow. The goal was to build a functional single-screen interface that dynamically handles user input, updates local state, and connects to a cloud database.
+## Features
+* **Cross-Platform:** Runs natively on both iOS and Android from a single codebase.
+* **Cloud Sync:** Real-time data storage and deletion via Firebase REST API integrations.
+* **Instant UI Updates:** Optimistic local state rendering for a responsive user experience.
+
+## Authors
+* **Nicholas Reed** - *Primary Developer*
+* **Joseph Ruth** - *Collaborator (UI Customization)*
 
 ## Instructions to Run
 
